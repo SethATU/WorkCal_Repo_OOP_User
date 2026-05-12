@@ -2,41 +2,23 @@ package ie.atu.oop_project_user.Controller;
 
 import ie.atu.oop_project_user.Model.User;
 import ie.atu.oop_project_user.Service.UserService;
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/auth")
+@RequiredArgsConstructor
 public class UserController {
-    private final UserService userService;
+    private final UserService UserService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestParam String username, @RequestParam String password) {
+        return ResponseEntity.ok(UserService.register(username,password));
     }
 
-    @PostMapping
-    public ResponseEntity<?> createUser(@Valid @RequestBody User user) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(user));
-    }
-
-    @GetMapping("/findId/{id}")
-    public ResponseEntity<?> getUserById(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getUserById(id));
-    }
-
-    @GetMapping("/allUsers")
-    public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
-    }
-
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        userService.getUserById(id);
-        userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody User login) {
+        return ResponseEntity.ok(UserService.login(login));
     }
 }

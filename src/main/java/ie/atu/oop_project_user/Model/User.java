@@ -8,11 +8,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Entity
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@Builder
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,4 +26,3 @@ public class User {
     @NotBlank(message = "You must enter a password")
     private String password;
 }
-
