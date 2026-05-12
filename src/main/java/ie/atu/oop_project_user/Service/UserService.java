@@ -2,36 +2,34 @@ package ie.atu.oop_project_user.Service;
 
 import ie.atu.oop_project_user.Model.User;
 import ie.atu.oop_project_user.Repository.UserRepo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    private final UserRepo userRepo;
+    private final UserRepo userRepository;
 
-    private UserService(UserRepo userRepo) {
-        this.userRepo = userRepo;
-    }
+    public String register(String username, String password) {
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(password);
 
-    public User createUser(User user) {
-        userRepo.save(user);
-        return user;
-    }
-
-    public User getUserById(Long id) {
-        return userRepo.findById(id).orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
-    }
-
-    public List<User> getAllUsers() {
-        return userRepo.findAll();
-    }
-
-    public void deleteUser(Long id) {
-        if (!userRepo.existsById(id)) {
-            throw new RuntimeException("User with id " + id + " not found");
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            throw new RuntimeException("Username already exists");
         }
-        userRepo.deleteById(id);
+        userRepository.save(user);
+        return "Successfully registered";
+    }
+
+    public Long login(User request) {
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!user.getPassword().equals(request.getPassword())) {
+            throw new RuntimeException("Incorrect password");
+        }
+        return user.getId();
     }
 }
